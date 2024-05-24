@@ -30,7 +30,6 @@ class Client extends User
         $this->adresse = new ArrayCollection();
         $this->commande = new ArrayCollection();
     }
-
     public function getSolde(): ?float
     {
         return $this->solde;
@@ -102,4 +101,5 @@ class Client extends User
 
         return $this;
     }
+
 }

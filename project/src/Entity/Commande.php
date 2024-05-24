@@ -27,7 +27,7 @@ class Commande
 
     #[ORM\ManyToOne(inversedBy: 'commande')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Client $client = null;
+    private ?Client $client;
 
     /**
      * @var Collection<int, Livre>

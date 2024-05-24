@@ -7,9 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\Table(name:'user')]
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name:'discr', type: 'string')]
 #[ORM\DiscriminatorMap(['client'=>Client::class])]
@@ -23,21 +25,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\NotBlank()]
+    #[Assert\Length(min:2,max:50)]
     private ?string $nom = null;
 
     #[ORM\Column(type:'string', length: 50)]
+    #[Assert\Length(min:2,max:50)]
     private ?string $prenom = null;
 
      #[ORM\Column(type:'string', length: 50, unique: true)]
+     #[Assert\Length(min:2,max:50)]
     private ?string $pseudo = null;
 
     #[ORM\Column(type:'string', length: 180, unique: true)]
+    #[Assert\Email()]
+    #[Assert\Length(min:2,max:180)]
     private ?string $email;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column(type:'json')]
+    #[Assert\NotNull()]
     private array $roles = [];
 
     private ?string $plainPassword = null;
@@ -46,6 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank()]
     private ?string $password = null;
 
 
@@ -55,7 +64,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $photo = null;
 
-   
+    public function __construct()
+    {
+    }
+
 
     public function getId(): ?int
     {
@@ -128,8 +140,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        // guarantee every user at least has ROLE_CLIENT
+        $roles[] = 'ROLE_CLIENT';
 
         return array_unique($roles);
     }
