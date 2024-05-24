@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Table(name:'user')]
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name:'discr', type: 'string')]
-#[ORM\DiscriminatorMap(['client'=>Client::class])]
+#[ORM\DiscriminatorMap(['client'=>Client::class, 'user'=>User::class])]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {

@@ -39,10 +39,6 @@ class Livre
 
     #[ORM\ManyToOne(inversedBy: 'livres')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Commande $commande = null;
-
-    #[ORM\ManyToOne(inversedBy: 'livres')]
-    #[ORM\JoinColumn(nullable: false)]
     private ?Categorie $categorie = null;
 
     /**
@@ -51,9 +47,16 @@ class Livre
     #[ORM\ManyToMany(targetEntity: Auteur::class, inversedBy: 'livres')]
     private Collection $auteur;
 
+    /**
+     * @var Collection<int, Commande>
+     */
+    #[ORM\ManyToMany(targetEntity: Commande::class, inversedBy: 'livres')]
+    private Collection $commande;
+
     public function __construct()
     {
         $this->auteur = new ArrayCollection();
+        $this->commande = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,18 +148,6 @@ class Livre
         return $this;
     }
 
-    public function getCommande(): ?Commande
-    {
-        return $this->commande;
-    }
-
-    public function setCommande(?Commande $commande): static
-    {
-        $this->commande = $commande;
-
-        return $this;
-    }
-
     public function getCategorie(): ?Categorie
     {
         return $this->categorie;
@@ -189,6 +180,30 @@ class Livre
     public function removeAuteur(Auteur $auteur): static
     {
         $this->auteur->removeElement($auteur);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Commande>
+     */
+    public function getCommande(): Collection
+    {
+        return $this->commande;
+    }
+
+    public function addCommande(Commande $commande): static
+    {
+        if (!$this->commande->contains($commande)) {
+            $this->commande->add($commande);
+        }
+
+        return $this;
+    }
+
+    public function removeCommande(Commande $commande): static
+    {
+        $this->commande->removeElement($commande);
 
         return $this;
     }

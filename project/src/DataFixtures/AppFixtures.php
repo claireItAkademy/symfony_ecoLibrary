@@ -117,10 +117,12 @@ class AppFixtures extends Fixture
             $livre->setImage($faker->imageUrl(200, 200));
             $livre->setStock($faker->numberBetween(1, 10));
             $livre->setDescription($faker->paragraph(1));
+            $livre->setDatePublication($faker->dateTime());
             $livre->setCategorie($faker->randomElement($categories));
             $livre->setPrix($faker->randomFloat(2, 1000));
 
             $manager->persist($livre);
+            $livres[] = $livre;
         }
 
         // Création des statuts de commande
@@ -133,16 +135,29 @@ class AppFixtures extends Fixture
             $statusCommandes[] = $statusCommande;
         }
 
+
+        $commandes = [];
         // Création des commandes
         for ($i = 0; $i < self::NBCOMMANDES; $i++) {
             $commande = new Commande();
             $commande->setCommandeReference($faker->uuid())
                 ->setDateCommande(new DateTime($faker->date()))
                 ->setTotal($faker->randomFloat(2, 10, 1000))
-                ->setClient($faker->randomElement($clients));
+                ->setClient($faker->randomElement($clients))
+                ->setStatusCommande($faker->randomElement($statusCommandes));
 
+            if (!empty($livres)) {
+                $nbLivres = $faker->numberBetween(1, 5); // Nombre aléatoire de livres par commande
+                for ($j = 0; $j < $nbLivres; $j++) {
+                    $livre = $faker->randomElement($livres);
+                    $commande->addLivre($livre);
+                }
+            }
             $manager->persist($commande);
+            $commandes[] = $commande;
+
         }
+        
 
         $manager->flush();
     }

@@ -29,20 +29,21 @@ class Commande
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client;
 
-    /**
-     * @var Collection<int, Livre>
-     */
-    #[ORM\OneToMany(targetEntity: Livre::class, mappedBy: 'commande', orphanRemoval: true)]
-    private Collection $livres;
-
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     #[ORM\JoinColumn(nullable: false)]
     private ?StatusCommande $statusCommande = null;
+
+    /**
+     * @var Collection<int, Livre>
+     */
+    #[ORM\ManyToMany(targetEntity: Livre::class, mappedBy: 'commande')]
+    private Collection $livres;
 
     public function __construct()
     {
         $this->livres = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -85,6 +86,18 @@ class Commande
         return $this;
     }
 
+    public function getStatusCommande(): ?StatusCommande
+    {
+        return $this->statusCommande;
+    }
+
+    public function setStatusCommande(?StatusCommande $statusCommande): static
+    {
+        $this->statusCommande = $statusCommande;
+
+        return $this;
+    }
+
     public function getClient(): ?Client
     {
         return $this->client;
@@ -96,7 +109,6 @@ class Commande
 
         return $this;
     }
-
     /**
      * @return Collection<int, Livre>
      */
@@ -109,7 +121,7 @@ class Commande
     {
         if (!$this->livres->contains($livre)) {
             $this->livres->add($livre);
-            $livre->setCommande($this);
+            $livre->addCommande($this);
         }
 
         return $this;
@@ -118,23 +130,8 @@ class Commande
     public function removeLivre(Livre $livre): static
     {
         if ($this->livres->removeElement($livre)) {
-            // set the owning side to null (unless already changed)
-            if ($livre->getCommande() === $this) {
-                $livre->setCommande(null);
-            }
+            $livre->removeCommande($this);
         }
-
-        return $this;
-    }
-
-    public function getStatusCommande(): ?StatusCommande
-    {
-        return $this->statusCommande;
-    }
-
-    public function setStatusCommande(?StatusCommande $statusCommande): static
-    {
-        $this->statusCommande = $statusCommande;
 
         return $this;
     }
