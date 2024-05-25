@@ -8,6 +8,7 @@ use App\Entity\Categorie;
 use App\Entity\Client;
 use App\Entity\Commande;
 use App\Entity\Livre;
+use App\Entity\LivreCommande;
 use App\Entity\StatusCommande;
 use App\Entity\User;
 use DateTime;
@@ -147,10 +148,15 @@ class AppFixtures extends Fixture
                 ->setStatusCommande($faker->randomElement($statusCommandes));
 
             if (!empty($livres)) {
-                $nbLivres = $faker->numberBetween(1, 5); // Nombre aléatoire de livres par commande
+                // Nombre aléatoire de livres par commande
+                $nbLivres = $faker->numberBetween(1, 5);
                 for ($j = 0; $j < $nbLivres; $j++) {
                     $livre = $faker->randomElement($livres);
-                    $commande->addLivre($livre);
+                    $quantite = $faker->numberBetween(1, 5);
+                    $livreCommande = new LivreCommande($commande, $livre, $quantite);
+                    //$commande->addLivre($livre);
+                    $commande->addLivreCommande($livreCommande);
+
                 }
             }
             $manager->persist($commande);

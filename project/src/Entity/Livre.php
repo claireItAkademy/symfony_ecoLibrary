@@ -48,15 +48,15 @@ class Livre
     private Collection $auteur;
 
     /**
-     * @var Collection<int, Commande>
+     * @var Collection<int, LivreCommande>
      */
-    #[ORM\ManyToMany(targetEntity: Commande::class, inversedBy: 'livres')]
-    private Collection $commande;
+    #[ORM\OneToMany(targetEntity: LivreCommande::class, mappedBy: 'livre', cascade: ["persist"], orphanRemoval: true)]
+    private Collection $livreCommandes;
 
     public function __construct()
     {
         $this->auteur = new ArrayCollection();
-        $this->commande = new ArrayCollection();
+        $this->livreCommandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -184,26 +184,64 @@ class Livre
         return $this;
     }
 
-    /**
-     * @return Collection<int, Commande>
-     */
-    public function getCommande(): Collection
-    {
-        return $this->commande;
-    }
 
-    public function addCommande(Commande $commande): static
+    public function addCommande(Commande $commande, int $quantite): static
     {
-        if (!$this->commande->contains($commande)) {
-            $this->commande->add($commande);
+        foreach ($this->livreCommandes as $existingCommande) {
+            if ($existingCommande->getCommande()->getId() === $commande->getId()) {
+                return $this;
+            }
         }
 
+        // If the commande doesn't exist in the collection, add it
+        $livreCommande = new LivreCommande();
+        $livreCommande->setLivre($this);
+        $livreCommande->setCommande($commande);
+        $livreCommande->setQuantite($quantite);
+
+        $this->livreCommandes->add($livreCommande);
         return $this;
     }
 
     public function removeCommande(Commande $commande): static
     {
-        $this->commande->removeElement($commande);
+        foreach ($this->livreCommandes as $key => $livreCommande) {
+            if ($livreCommande->getCommande() === $commande) {
+                $this->livreCommandes->removeElement($livreCommande);
+                $commande->removeLivre($this);
+                break;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LivreCommande>
+     */
+    public function getLivreCommandes(): Collection
+    {
+        return $this->livreCommandes;
+    }
+
+    public function addLivreCommande(LivreCommande $livreCommande): static
+    {
+        if (!$this->livreCommandes->contains($livreCommande)) {
+            $this->livreCommandes->add($livreCommande);
+            $livreCommande->setLivre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivreCommande(LivreCommande $livreCommande): static
+    {
+        if ($this->livreCommandes->removeElement($livreCommande)) {
+            // set the owning side to null (unless already changed)
+            if ($livreCommande->getLivre() === $this) {
+                $livreCommande->setLivre(null);
+            }
+        }
 
         return $this;
     }
