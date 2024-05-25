@@ -17,18 +17,18 @@ class Client extends User
      * @var Collection<int, Adresse>
      */
     #[ORM\OneToMany(targetEntity: Adresse::class, mappedBy: 'client', orphanRemoval: true)]
-    private Collection $adresse;
+    private Collection $adresses;
 
     /**
      * @var Collection<int, Commande>
      */
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'client', orphanRemoval: true)]
-    private Collection $commande;
+    private Collection $commandes;
 
     public function __construct()
     {
-        $this->adresse = new ArrayCollection();
-        $this->commande = new ArrayCollection();
+        $this->adresses = new ArrayCollection();
+        $this->commandes = new ArrayCollection();
     }
     public function getSolde(): ?float
     {
@@ -45,24 +45,25 @@ class Client extends User
     /**
      * @return Collection<int, Adresse>
      */
-    public function getAdresse(): Collection
+    public function getAdresses(): Collection
     {
-        return $this->adresse;
+        return $this->adresses;
     }
 
-    public function addAdresse(Adresse $adresse): static
+    public function addAdresses(Adresse $adresse): static
     {
-        if (!$this->adresse->contains($adresse)) {
-            $this->adresse->add($adresse);
+        if (!$this->adresses->contains($adresse)) {
+            $this->adresses->add($adresse);
             $adresse->setClient($this);
         }
 
         return $this;
     }
 
-    public function removeAdresse(Adresse $adresse): static
+
+    public function removeAdresses(Adresse $adresse): static
     {
-        if ($this->adresse->removeElement($adresse)) {
+        if ($this->adresses->removeElement($adresse)) {
             // set the owning side to null (unless already changed)
             if ($adresse->getClient() === $this) {
                 $adresse->setClient(null);
@@ -75,24 +76,25 @@ class Client extends User
     /**
      * @return Collection<int, Commande>
      */
-    public function getCommande(): Collection
+    public function getCommandes(): Collection
     {
-        return $this->commande;
+        return $this->commandes;
     }
 
     public function addCommande(Commande $commande): static
     {
-        if (!$this->commande->contains($commande)) {
-            $this->commande->add($commande);
+        if (!$this->commandes->contains($commande)) {
+            $this->commandes->add($commande);
             $commande->setClient($this);
         }
 
         return $this;
     }
 
+
     public function removeCommande(Commande $commande): static
     {
-        if ($this->commande->removeElement($commande)) {
+        if ($this->commandes->removeElement($commande)) {
             // set the owning side to null (unless already changed)
             if ($commande->getClient() === $this) {
                 $commande->setClient(null);

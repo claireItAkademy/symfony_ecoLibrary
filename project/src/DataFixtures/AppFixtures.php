@@ -24,7 +24,6 @@ class AppFixtures extends Fixture
     const NBLIVRES = 40;
     const NBCOMMANDES = 8;
     const NBADRESSES = 11;
-    const NBUSERS = 20;
     const NBCLIENTS = 16;
     const NBSTATUSCOMMANDES = 5;
     const NBAUTEURS = 20;
@@ -55,38 +54,54 @@ class AppFixtures extends Fixture
 
             $manager->persist($client);
             $clients[] = $client;
+
+            // Création des adresses
+
+                $adresse = new Adresse();
+                $adresse
+                    ->setVille($faker->city())
+                    ->setCodePostal($faker->postcode())
+                    ->setRue($faker->streetAddress())
+                    ->setPays($faker->country())
+                    ->setClient($client);
+
+                $manager->persist($adresse);
+
         }
 
-        // Flush les entités persistées jusqu'à maintenant pour leur attribuer un ID
-        $manager->flush();
-
-        // Création des utilisateurs administrateurs
-        $adminUser = new User();
-        $adminUser
-            ->setPrenom($faker->firstName())
-            ->setNom($faker->lastName())
-            ->setPseudo('admin')
-            ->setRoles(["ROLE_ADMIN"])
-            ->setPassword($this->passwordHasher->hashPassword($adminUser, 'admin'))
-            ->setEmail($faker->freeEmail())
-            ->setTelephone($faker->phoneNumber())
-            ->setPhoto('../assets/images/profile-picture.webp');
-
-        $manager->persist($adminUser);
-        // Création des adresses
-        $adresses = [];
-        for ($i = 0; $i < self::NBADRESSES; $i++) {
+        // Création d'adresses supplémentaires et affectation aléatoire à des clients existants
+        for ($j = 0; $j < self::NBADRESSES; $j++) {
             $adresse = new Adresse();
             $adresse
                 ->setVille($faker->city())
                 ->setCodePostal($faker->postcode())
                 ->setRue($faker->streetAddress())
                 ->setPays($faker->country())
+                // Sélection aléatoire d'un client
                 ->setClient($faker->randomElement($clients));
 
             $manager->persist($adresse);
-            $adresses[] = $adresse;
         }
+
+        // Flush les entités persistées jusqu'à maintenant pour leur attribuer un ID
+        $manager->flush();
+
+        $adminUsers = [];
+
+            // Création des utilisateurs administrateurs
+            $adminUser = new User();
+            $adminUser
+                ->setPrenom($faker->firstName())
+                ->setNom($faker->lastName())
+                ->setPseudo('admin')
+                ->setRoles(["ROLE_ADMIN"])
+                ->setPassword($this->passwordHasher->hashPassword($adminUser, 'admin'))
+                ->setEmail($faker->freeEmail())
+                ->setTelephone($faker->phoneNumber())
+                ->setPhoto('../assets/images/profile-picture.webp');
+
+            $manager->persist($adminUser);
+            $adminUsers[] = $adminUser;
 
 
 

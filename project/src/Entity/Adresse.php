@@ -25,7 +25,7 @@ class Adresse
     #[ORM\Column(length: 100)]
     private ?string $pays = null;
 
-    #[ORM\ManyToOne(inversedBy: 'adresse')]
+    #[ORM\ManyToOne(inversedBy: 'adresses')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
@@ -87,7 +87,7 @@ class Adresse
         return $this->client;
     }
 
-    public function setClient(?Client $client): static
+    public function setClient(?Client $client): self
     {
         $this->client = $client;
 
