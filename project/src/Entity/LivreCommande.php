@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LivreCommandeRepository;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
 
+
+#[ApiResource]
 #[ORM\Entity(repositoryClass: LivreCommandeRepository::class)]
 class LivreCommande
 {
