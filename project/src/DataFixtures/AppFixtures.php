@@ -8,6 +8,7 @@ use App\Entity\Categorie;
 use App\Entity\Client;
 use App\Entity\Commande;
 use App\Entity\Livre;
+use App\Entity\LivreAuteur;
 use App\Entity\LivreCommande;
 use App\Entity\StatusCommande;
 use App\Entity\User;
@@ -99,17 +100,7 @@ class AppFixtures extends Fixture
             $categories[] = $categorie;
         }
 
-        // Création des auteurs
-        $auteurs = [];
-        for ($i = 0; $i < self::NBAUTEURS; $i++) {
-            $auteur = new Auteur();
-            $auteur->setNom($faker->firstName());
-            $auteur->setPrenom($faker->lastname());
-            $auteur->setBiographie($faker->text(300));
-            $manager->persist($auteur);
-            $auteurs[] = $auteur;
-        }
-
+        $livres = [];
         // Création des livres
         for ($i = 0; $i < self::NBLIVRES; $i++) {
             $livre= new Livre();
@@ -125,6 +116,39 @@ class AppFixtures extends Fixture
             $manager->persist($livre);
             $livres[] = $livre;
         }
+
+
+        $auteurs = [];
+        for ($i = 0; $i < self::NBAUTEURS; $i++) {
+            $auteur = new Auteur();
+            $auteur->setNom($faker->firstName());
+            $auteur->setPrenom($faker->lastName());
+            $auteur->setBiographie($faker->text(300));
+
+
+            $manager->persist($auteur);
+            $auteurs[] = $auteur;
+        }
+
+        $manager->flush();
+
+        // Associer les livres aux auteurs
+        foreach ($auteurs as $auteur) {
+            $nbLivres = $faker->numberBetween(1, 5);
+            for ($j = 0; $j < $nbLivres; $j++) {
+                $livre = $faker->randomElement($livres);
+                if ($livre) {
+                    $livreAuteur = new LivreAuteur($auteur, $livre);
+                    $auteur->addLivreAuteur($livreAuteur);
+                    $livre->addLivreAuteur($livreAuteur);
+
+                    $manager->persist($livreAuteur);
+                }
+            }
+        }
+
+        $manager->flush();
+
 
         // Création des statuts de commande
         $statusCommandes = [];

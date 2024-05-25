@@ -26,14 +26,14 @@ class Auteur
     private ?string $biographie = null;
 
     /**
-     * @var Collection<int, Livre>
+     * @var Collection<int, LivreAuteur>
      */
-    #[ORM\ManyToMany(targetEntity: Livre::class, mappedBy: 'auteur')]
-    private Collection $livres;
+    #[ORM\OneToMany(targetEntity: LivreAuteur::class, mappedBy: 'auteur',  cascade: ["persist"],orphanRemoval: true)]
+    private Collection $livreAuteurs;
 
     public function __construct()
     {
-        $this->livres = new ArrayCollection();
+        $this->livreAuteurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,16 +82,26 @@ class Auteur
      */
     public function getLivres(): Collection
     {
-        return $this->livres;
+        return $this->getLivreAuteurs()->map(function (LivreAuteur $livreAuteur) {
+            return $livreAuteur->getLivre();
+        });
     }
 
-    public function addLivre(Livre $livre): static
+    public function addLivre(livre $livre): static
     {
-        if (!$this->livres->contains($livre)) {
-            $this->livres->add($livre);
-            $livre->addAuteur($this);
+
+        foreach ($this->livreAuteurs as $existingLivre) {
+            if ($existingLivre->getLivre()->getId() === $livre->getId()) {
+                return $this;
+            }
         }
 
+        // If the commande doesn't exist in the collection, add it
+        $livreAuteur = new LivreAuteur();
+        $livreAuteur->setAuteur($this);
+        $livreAuteur->setLivre($livre);
+
+        $this->livreAuteurs->add($livreAuteur);
         return $this;
     }
 
@@ -99,6 +109,36 @@ class Auteur
     {
         if ($this->livres->removeElement($livre)) {
             $livre->removeAuteur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, LivreAuteur>
+     */
+    public function getLivreAuteurs(): Collection
+    {
+        return $this->livreAuteurs;
+    }
+
+    public function addLivreAuteur(LivreAuteur $livreAuteur): static
+    {
+        if (!$this->livreAuteurs->contains($livreAuteur)) {
+            $this->livreAuteurs->add($livreAuteur);
+            $livreAuteur->setAuteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLivreAuteur(LivreAuteur $livreAuteur): static
+    {
+        if ($this->livreAuteurs->removeElement($livreAuteur)) {
+            // set the owning side to null (unless already changed)
+            if ($livreAuteur->getAuteur() === $this) {
+                $livreAuteur->setAuteur(null);
+            }
         }
 
         return $this;
