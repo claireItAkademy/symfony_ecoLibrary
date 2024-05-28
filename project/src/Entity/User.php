@@ -8,9 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['user:read','livre:read','livreCommande:read']],
+    denormalizationContext: ['groups' =>  ['user:create']],
+    forceEager: false
+)]
 #[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name:'user')]
@@ -23,24 +28,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type:'integer')]
+    #[Groups('user:read', 'livre:read')]
     private ?int $id = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min:2,max:50)]
+    #[Groups('user:read', 'livre:read')]
     private ?string $nom = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\Length(min:2,max:50)]
+    #[Groups('user:read', 'livre:read')]
     private ?string $prenom = null;
 
      #[ORM\Column(type:'string', length: 50, unique: true)]
      #[Assert\Length(min:2,max:50)]
+     #[Groups('user:read', 'livre:read')]
     private ?string $pseudo = null;
 
     #[ORM\Column(type:'string', length: 180, unique: true)]
     #[Assert\Email()]
     #[Assert\Length(min:2,max:180)]
+    #[Groups('user:read', 'livre:read')]
     private ?string $email;
 
     /**
@@ -48,6 +58,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type:'json')]
     #[Assert\NotNull()]
+    #[Groups('user:read', 'livre:read')]
     private array $roles = [];
 
 
@@ -60,9 +71,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     #[ORM\Column(length: 50)]
+    #[Groups('user:read', 'livre:read')]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups('user:read', 'livre:read')]
     private ?string $photo = null;
 
     public function __construct()

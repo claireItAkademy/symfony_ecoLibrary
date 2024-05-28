@@ -8,40 +8,55 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['livre:read','categorie:read','auteur:read']],
+    denormalizationContext: ['groups' => 'livre:write', 'livre:update'],
+    forceEager: false
+)]
+#
 #[ORM\Entity(repositoryClass: LivreRepository::class)]
 class Livre
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     #[ORM\Column]
-    private ?int $id = null;
 
+    private ?int $id = null;
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     #[ORM\Column(type:'string',length: 100)]
     private ?string $ISBN = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?string $description = null;
 
     #[ORM\Column(type:'string',length: 255)]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?\DateTimeInterface $datePublication = null;
 
     #[ORM\Column(type:'float',length: 255)]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?float $prix = null;
 
     #[ORM\Column(type:'integer', length: 255)]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?int $stock = null;
 
     #[ORM\ManyToOne(inversedBy: 'livres')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['livre:read'])]
     private ?Categorie $categorie = null;
 
     /**
@@ -55,6 +70,15 @@ class Livre
      */
     #[ORM\OneToMany(targetEntity: LivreAuteur::class, mappedBy: 'livre',  cascade: ["persist"],orphanRemoval: true)]
     private Collection $livreAuteurs;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column]
+    private ?bool $isFavorited = null;
 
     public function __construct()
     {
@@ -281,6 +305,42 @@ class Livre
                 $livreAuteur->setLivre(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function isFavorited(): ?bool
+    {
+        return $this->isFavorited;
+    }
+
+    public function setFavorited(bool $isFavorited): static
+    {
+        $this->isFavorited = $isFavorited;
 
         return $this;
     }

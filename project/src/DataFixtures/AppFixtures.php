@@ -127,7 +127,12 @@ class AppFixtures extends Fixture
             $livre->setDatePublication($faker->dateTime());
             $livre->setCategorie($faker->randomElement($categories));
             $livre->setPrix($faker->randomFloat(2, 1000));
-
+            $createdAt = new \DateTimeImmutable();
+            $livre->setCreatedAt($createdAt);
+            $updatedAt = new \DateTimeImmutable();
+            $livre->setUpdatedAt($updatedAt);
+            $isFavorited = rand(0, 1) == 1;
+            $livre->setFavorited($isFavorited);
             $manager->persist($livre);
             $livres[] = $livre;
         }
