@@ -158,7 +158,7 @@ class AppFixtures extends Fixture
             for ($j = 0; $j < $nbLivres; $j++) {
                 $livre = $faker->randomElement($livres);
                 if ($livre) {
-                    $livreAuteur = new LivreAuteur($auteur, $livre);
+                    $livreAuteur = new LivreAuteur();
                     $auteur->addLivreAuteur($livreAuteur);
                     $livre->addLivreAuteur($livreAuteur);
 

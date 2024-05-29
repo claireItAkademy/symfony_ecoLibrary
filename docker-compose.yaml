@@ -29,7 +29,7 @@ services:
       - "8000:80"
     volumes:
       - ./docker/vhosts:/etc/apache2/sites-enabled
-      - C:/project/ecoLibrary/project:/var/www/project
+      - ./project:/var/www/project
     networks:
       - dev
 

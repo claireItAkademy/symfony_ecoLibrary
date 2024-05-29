@@ -4,13 +4,12 @@ controllers:
         namespace: App\Controller
     type: attribute
 
-app_login:
-    path: /api/login
-    controller: App\Controller\SecurityController::login
+#app_login:
+    #path: /api/login
+    #controller: App\Controller\SecurityController::login
 
 app_logout:
     path: /api/logout
 
-auth:
-    path: /app_login
-    methods: ['POST']
+api_login_check:
+    path: /api/login_check
