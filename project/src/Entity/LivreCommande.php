@@ -8,24 +8,31 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
-#[ApiResource()]
+#[ApiResource(
+    normalizationContext: ['groups' => ['livreCommande:read']],
+    forceEager: false
+)]
 #[ORM\Entity(repositoryClass: LivreCommandeRepository::class)]
 class LivreCommande
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['livreCommande:read'])]
     private ?int $id = null;
     
     #[ORM\Column()]
+    #[Groups(['livreCommande:read'])]
     private ?int $quantite = null;
 
     #[ORM\ManyToOne(inversedBy: 'livreCommandes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['livreCommande:read'])]
     private ?Livre $livre = null;
 
     #[ORM\ManyToOne(inversedBy: 'livreCommandes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['livreCommande:read'])]
     private ?Commande $commande = null;
 
 

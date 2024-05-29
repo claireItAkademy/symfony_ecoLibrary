@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,10 +14,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    normalizationContext: ['groups' => ['user:read','livre:read','livreCommande:read']],
-    denormalizationContext: ['groups' =>  ['user:create']],
+    normalizationContext: ['groups' => ['user:read','livre:read','livreCommande:read','client:read']],
+    denormalizationContext: ['groups' =>  ['user:write']],
     forceEager: false
 )]
+#[ApiFilter(SearchFilter::class, properties: [ 'pseudo' => 'partial' ,'email' => 'exact'])]
 #[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name:'user')]
@@ -28,29 +31,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type:'integer')]
-    #[Groups('user:read', 'livre:read')]
+    #[Groups('user:read')]
     private ?int $id = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min:2,max:50)]
-    #[Groups('user:read', 'livre:read')]
+    #[Groups(['user:read','user:write'])]
     private ?string $nom = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\Length(min:2,max:50)]
-    #[Groups('user:read', 'livre:read')]
+    #[Groups(['user:read','user:write'])]
     private ?string $prenom = null;
 
      #[ORM\Column(type:'string', length: 50, unique: true)]
      #[Assert\Length(min:2,max:50)]
-     #[Groups('user:read', 'livre:read')]
+     #[Groups(['user:read','user:write'])]
     private ?string $pseudo = null;
 
     #[ORM\Column(type:'string', length: 180, unique: true)]
     #[Assert\Email()]
     #[Assert\Length(min:2,max:180)]
-    #[Groups('user:read', 'livre:read')]
+    #[Groups(['user:read','user:write'])]
     private ?string $email;
 
     /**
@@ -58,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type:'json')]
     #[Assert\NotNull()]
-    #[Groups('user:read', 'livre:read')]
+    #[Groups('user:read')]
     private array $roles = [];
 
 
@@ -67,15 +70,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Assert\NotBlank()]
+    #[Groups(['user:read','user:write'])]
     private ?string $password = null;
 
 
     #[ORM\Column(length: 50)]
-    #[Groups('user:read', 'livre:read')]
+    #[Groups(['user:read','user:write'])]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups('user:read', 'livre:read')]
+    #[Groups(['user:read','user:write'])]
     private ?string $photo = null;
 
     public function __construct()

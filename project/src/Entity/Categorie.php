@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CategorieRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,21 +18,22 @@ use Symfony\Component\Serializer\Annotation\Groups;
     denormalizationContext: ['groups' => ['categorie:write', 'categorie:update']],
     forceEager: false
 )]
+#[ApiFilter(SearchFilter::class, properties: [ 'nomCategorie' => 'partial'])]
 #[ORM\Entity(repositoryClass: CategorieRepository::class)]
 class Categorie
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['livre:read','category:read'])]
+    #[Groups(['livre:read','categorie:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['livre:read','category:read'])]
+    #[Groups(['livre:read','categorie:read'])]
     private ?string $nomCategorie = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['livre:read','category:read'])]
+    #[Groups(['livre:read','categorie:read'])]
     private ?string $description = null;
 
     /**

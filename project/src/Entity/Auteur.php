@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\AuteurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,24 +14,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['auteur:read','livre:read']],
-    denormalizationContext: ['groups' => 'livre:write', 'livre:update','auteur:write', 'auteur:update'],
+    denormalizationContext: ['groups' => 'livre:write', 'auteur:write'],
     forceEager: false
 )]
+#[ApiFilter(SearchFilter::class, properties: [ 'nom' => 'exact' ,'prenom' => 'exact'])]
 #[ORM\Entity(repositoryClass: AuteurRepository::class)]
 class Auteur
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['livre:read','auteur:read'])]
+    #[Groups(['livre:read','auteur:read','livreAuteur:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['livre:read','auteur:read'])]
+    #[Groups(['livre:read','auteur:read','livreAuteur:read'])]
     private ?string $nom = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['livre:read','auteur:read'])]
+    #[Groups(['livre:read','auteur:read','livreAuteur:read'])]
     private ?string $prenom = null;
 
     #[ORM\Column(type: Types::TEXT)]

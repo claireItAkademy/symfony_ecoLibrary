@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\AdresseRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,34 +14,35 @@ use Symfony\Component\Serializer\Annotation\Groups;
     denormalizationContext: ['groups' => 'user:write'],
     forceEager: false
 )]
+#[ApiFilter(SearchFilter::class, properties: [ 'ville' => 'partial' ,'codePostal' => 'exact'])]
 #[ORM\Entity(repositoryClass: AdresseRepository::class)]
 class Adresse
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read','user:create'])]
+    #[Groups(['user:read','client:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['user:read','user:create'])]
+    #[Groups(['client:read','user:read','user:write'])]
     private ?string $rue = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['user:read','user:create'])]
+    #[Groups(['client:read','user:read','user:write'])]
     private ?string $ville = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['user:read','user:create'])]
+    #[Groups(['client:read','user:read','user:write'])]
     private ?string $codePostal = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['user:read','user:create'])]
+    #[Groups(['client:read','user:read','user:write'])]
     private ?string $pays = null;
 
     #[ORM\ManyToOne(inversedBy: 'adresses')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['user:read','user:create'])]
+    #[Groups(['user:read','user:write'])]
     private ?Client $client = null;
 
     public function getId(): ?int

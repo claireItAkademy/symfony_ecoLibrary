@@ -2,37 +2,51 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CommandeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['commande:read','livreCommande:read','client:read','statusCommande:read']],
+    denormalizationContext: ['groups' => 'commande:write', 'commande:update'],
+    forceEager: false
+)]
+#[ApiFilter(SearchFilter::class, properties: ['commandeReference' => 'exact'])]
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
 class Commande
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
     private ?string $commandeReference = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
     private ?\DateTimeInterface $dateCommande = null;
 
     #[ORM\Column]
+    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
     private ?float $total = null;
 
     #[ORM\ManyToOne(inversedBy: 'commande')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['user:read','client:read','commande:read','statusCommande:read'])]
     private ?Client $client;
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['commande:read'])]
     private ?StatusCommande $statusCommande = null;
 
 

@@ -12,22 +12,21 @@ security:
                 property: email
     firewalls:
         dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            pattern: ^/_(profiler|wdt)
             security: false
         api:
-            pattern: ^/api
+            pattern: ^/api/
             stateless: true
             provider: app_user_provider
             jwt: ~
         main:
             json_login:
-                check_path: /auth_token
-                username_path: pseudo
+                check_path: app_login # The name in routes.yaml is enough for mapping
+                username_path: email
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
             lazy: true
-            provider: app_user_provider
             custom_authenticator: App\Security\ApiTokenAuthenticator
             logout:
                 path: app_logout
@@ -45,7 +44,7 @@ security:
         - { path: ^/api/user, roles: IS_AUTHENTICATED_ANONYMOUSLY, methods: POST }
         - { path: ^/api/user, roles: [ROLE_ADMIN, ROLE_CLIENT] }
         - { path: ^/api/address, roles: [ROLE_ADMIN, ROLE_CLIENT] }
-        - { path: ^/auth_token, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

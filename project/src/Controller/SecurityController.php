@@ -14,17 +14,6 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/auth_token', name: 'auth_token', methods: ['POST'])]
-    public function getAuthToken(Request $request, JWTTokenManagerInterface $JWTTokenManager, UserInterface $user, Security $security): JsonResponse
-    {
-        if (!$this->isGranted('IS_AUTHENTICATED_FULLY')) {
-            throw new AuthenticationException('User is not authenticated');
-        }
-
-        $token = $JWTTokenManager->create($user);
-
-        return new JsonResponse(['token' => $token]);
-    }
 
     #[Route(path: '/login', name: 'app_login',methods: ['POST'])]
     public function login(AuthenticationUtils $authenticationUtils): Response

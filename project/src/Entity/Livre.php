@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LivreRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -16,17 +18,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
     denormalizationContext: ['groups' => 'livre:write', 'livre:update'],
     forceEager: false
 )]
-#
+#[ApiFilter(SearchFilter::class, properties: ['id' => 'exact',  'titre' => 'partial' ,'description' => 'partial'])]
 #[ORM\Entity(repositoryClass: LivreRepository::class)]
 class Livre
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[Groups(['livre:read','categorie:read','auteur:read'])]
+    #[Groups(['livre:read','categorie:read','auteur:read','livreAuteur:read','livreCommande:read'])]
     #[ORM\Column]
 
     private ?int $id = null;
-    #[Groups(['livre:read','categorie:read','auteur:read'])]
+    #[Groups(['livre:read','categorie:read','auteur:read','livreAuteur:read','livreCommande:read'])]
     #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
@@ -47,7 +49,7 @@ class Livre
     private ?\DateTimeInterface $datePublication = null;
 
     #[ORM\Column(type:'float',length: 255)]
-    #[Groups(['livre:read','categorie:read','auteur:read'])]
+    #[Groups(['livre:read','categorie:read','auteur:read','livreCommande:read'])]
     private ?float $prix = null;
 
     #[ORM\Column(type:'integer', length: 255)]
@@ -72,12 +74,15 @@ class Livre
     private Collection $livreAuteurs;
 
     #[ORM\Column]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column]
+    #[Groups(['livre:read','categorie:read','auteur:read'])]
     private ?bool $isFavorited = null;
 
     public function __construct()

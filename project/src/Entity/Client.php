@@ -2,33 +2,45 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['client:read','statusCommande:read']],
+    denormalizationContext: ['groups' => 'client:write', 'client:update'],
+    forceEager: false
+)]
+#[ApiFilter(SearchFilter::class, properties: [ 'nom' => 'exact' ,'prenom' => 'exact'])]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client extends User
 {
     #[ORM\Column]
+    #[Groups(['client:read'])]
     private ?float $solde = null;
 
     /**
      * @var Collection<int, Adresse>
      */
     #[ORM\OneToMany(targetEntity: Adresse::class, mappedBy: 'client', orphanRemoval: true)]
+    #[Groups(['client:read'])]
     private Collection $adresses;
 
     /**
      * @var Collection<int, Commande>
      */
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'client', orphanRemoval: true)]
+    #[Groups(['client:read'])]
     private Collection $commandes;
 
     public function __construct()
     {
+        //parent::__construct();
         $this->adresses = new ArrayCollection();
         $this->commandes = new ArrayCollection();
     }
