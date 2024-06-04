@@ -21,23 +21,23 @@ class Adresse
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read','client:read'])]
+    #[Groups(['client:read','client:write'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['client:read','user:read','user:write'])]
+    #[Groups(['client:read','client:write'])]
     private ?string $rue = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['client:read','user:read','user:write'])]
+    #[Groups(['client:read','client:write'])]
     private ?string $ville = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['client:read','user:read','user:write'])]
+    #[Groups(['client:read','client:write'])]
     private ?string $codePostal = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['client:read','user:read','user:write'])]
+    #[Groups(['client:read','client:write'])]
     private ?string $pays = null;
 
     #[ORM\ManyToOne(inversedBy: 'adresses')]
@@ -108,5 +108,10 @@ class Adresse
         $this->client = $client;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return (string) $this->id;
     }
 }

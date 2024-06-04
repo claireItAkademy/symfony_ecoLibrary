@@ -30,8 +30,8 @@ class Client extends User
      * @var Collection<int, Adresse>
      */
     #[ORM\OneToMany(targetEntity: Adresse::class, mappedBy: 'client', orphanRemoval: true)]
-    #[Groups(['client:read'])]
-    #[MaxDepth(1)]
+    #[Groups(['client:read','client:write'])]
+    //#[MaxDepth(1)]
     private Collection $adresses;
 
     /**
@@ -121,5 +121,10 @@ class Client extends User
 
         return $this;
     }
+
+    public function __toString() {
+        return (string)$this->id;
+    }
+
 
 }

@@ -32,32 +32,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type:'integer')]
-    #[Groups('user:read')]
+    #[Groups('user:read','client:read')]
     protected ?int $id = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min:2,max:50)]
-    #[Groups(['user:read','user:write'])]
+    #[Groups(['user:read','user:write','client:read','client:write'])]
     protected ?string $nom = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\Length(min:2,max:50)]
     #[Assert\NotBlank()]
-    #[Groups(['user:read','user:write'])]
+    #[Groups(['user:read','user:write','client:read','client:write'])]
     protected ?string $prenom = null;
 
      #[ORM\Column(type:'string', length: 50, unique: true)]
      #[Assert\NotBlank()]
      #[Assert\Length(min:2,max:50)]
-     #[Groups(['user:read','user:write'])]
+     #[Groups(['user:read','user:write','client:read','client:write'])]
     protected ?string $pseudo = null;
 
     #[ORM\Column(type:'string', length: 180, unique: true)]
     #[Assert\Email()]
     #[Assert\Length(min:2,max:180)]
     #[Assert\NotBlank()]
-    #[Groups(['user:read','user:write'])]
+    #[Groups(['user:read','user:write','client:read','client:write'])]
     protected ?string $email;
 
     /**
@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type:'json')]
     #[Assert\NotNull()]
-    #[Groups('user:read')]
+    #[Groups(['user:read','user:write','client:read','client:write'])]
     protected array $roles = [];
 
 
@@ -74,18 +74,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     #[Assert\NotBlank()]
-    #[Groups(['user:read','user:write'])]
+    #[Groups(['user:read','user:write','client:read','client:write'])]
     protected ?string $password = null;
 
 
     #[ORM\Column(length: 50)]
     #[Assert\NotBlank()]
-    #[Groups(['user:read','user:write'])]
+    #[Groups(['user:read','user:write','client:read','client:write'])]
     protected ?string $telephone = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank()]
-    #[Groups(['user:read','user:write'])]
+    #[Groups(['user:read','user:write','client:read','client:write'])]
     protected ?string $photo = null;
 
     public function __construct()
