@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\LivreCommandeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 
 #[ApiResource(
@@ -33,6 +34,7 @@ class LivreCommande
     #[ORM\ManyToOne(inversedBy: 'livreCommandes')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['livreCommande:read'])]
+    #[MaxDepth(1)]
     private ?Commande $commande = null;
 
 

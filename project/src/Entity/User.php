@@ -11,10 +11,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    normalizationContext: ['groups' => ['user:read','livre:read','livreCommande:read','client:read']],
+    normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' =>  ['user:write']],
     forceEager: false
 )]
@@ -32,29 +33,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\GeneratedValue]
     #[ORM\Column(type:'integer')]
     #[Groups('user:read')]
-    private ?int $id = null;
+    protected ?int $id = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\NotBlank()]
     #[Assert\Length(min:2,max:50)]
     #[Groups(['user:read','user:write'])]
-    private ?string $nom = null;
+    protected ?string $nom = null;
 
     #[ORM\Column(type:'string', length: 50)]
     #[Assert\Length(min:2,max:50)]
+    #[Assert\NotBlank()]
     #[Groups(['user:read','user:write'])]
-    private ?string $prenom = null;
+    protected ?string $prenom = null;
 
      #[ORM\Column(type:'string', length: 50, unique: true)]
+     #[Assert\NotBlank()]
      #[Assert\Length(min:2,max:50)]
      #[Groups(['user:read','user:write'])]
-    private ?string $pseudo = null;
+    protected ?string $pseudo = null;
 
     #[ORM\Column(type:'string', length: 180, unique: true)]
     #[Assert\Email()]
     #[Assert\Length(min:2,max:180)]
+    #[Assert\NotBlank()]
     #[Groups(['user:read','user:write'])]
-    private ?string $email;
+    protected ?string $email;
 
     /**
      * @var list<string> The user roles
@@ -62,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type:'json')]
     #[Assert\NotNull()]
     #[Groups('user:read')]
-    private array $roles = [];
+    protected array $roles = [];
 
 
     /**
@@ -71,16 +75,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     #[Assert\NotBlank()]
     #[Groups(['user:read','user:write'])]
-    private ?string $password = null;
+    protected ?string $password = null;
 
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank()]
     #[Groups(['user:read','user:write'])]
-    private ?string $telephone = null;
+    protected ?string $telephone = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
     #[Groups(['user:read','user:write'])]
-    private ?string $photo = null;
+    protected ?string $photo = null;
 
     public function __construct()
     {
@@ -221,6 +227,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
-
 }

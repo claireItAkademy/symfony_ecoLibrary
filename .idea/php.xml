@@ -190,6 +190,7 @@
       <path value="$PROJECT_DIR$/project/vendor/phar-io/manifest" />
       <path value="$PROJECT_DIR$/project/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/project/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/project/vendor/doctrine/annotations" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1" />

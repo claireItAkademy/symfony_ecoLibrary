@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     denormalizationContext: ['groups' => 'livre:write', 'livre:update'],
     forceEager: false
 )]
-#[ApiFilter(SearchFilter::class, properties: ['id' => 'exact',  'titre' => 'partial' ,'description' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['id' => 'exact', 'titre' => 'partial','description' => 'partial'])]
 #[ORM\Entity(repositoryClass: LivreRepository::class)]
 class Livre
 {
@@ -83,7 +83,7 @@ class Livre
 
     #[ORM\Column]
     #[Groups(['livre:read','categorie:read','auteur:read'])]
-    private ?bool $isFavorited = null;
+    private ?bool $isFavorited = false;
 
     public function __construct()
     {

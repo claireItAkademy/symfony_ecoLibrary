@@ -10,18 +10,20 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
 
 #[ApiResource(
-    normalizationContext: ['groups' => ['client:read','statusCommande:read']],
+    normalizationContext: ['groups' => ['client:read']],
     denormalizationContext: ['groups' => 'client:write', 'client:update'],
     forceEager: false
 )]
-#[ApiFilter(SearchFilter::class, properties: [ 'nom' => 'exact' ,'prenom' => 'exact'])]
+#[ApiFilter(SearchFilter::class, properties: [ 'nom' => 'partial' ,'prenom' => 'partial'])]
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client extends User
 {
     #[ORM\Column]
-    #[Groups(['client:read'])]
+    #[Groups(['client:read','client:write'])]
     private ?float $solde = null;
 
     /**
@@ -29,6 +31,7 @@ class Client extends User
      */
     #[ORM\OneToMany(targetEntity: Adresse::class, mappedBy: 'client', orphanRemoval: true)]
     #[Groups(['client:read'])]
+    #[MaxDepth(1)]
     private Collection $adresses;
 
     /**
@@ -36,6 +39,7 @@ class Client extends User
      */
     #[ORM\OneToMany(targetEntity: Commande::class, mappedBy: 'client', orphanRemoval: true)]
     #[Groups(['client:read'])]
+    #[MaxDepth(1)]
     private Collection $commandes;
 
     public function __construct()

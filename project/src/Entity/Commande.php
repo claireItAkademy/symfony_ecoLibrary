@@ -11,9 +11,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ApiResource(
-    normalizationContext: ['groups' => ['commande:read','livreCommande:read','client:read','statusCommande:read']],
+    normalizationContext: ['groups' => ['commande:read','statusCommande:read']],
     denormalizationContext: ['groups' => 'commande:write', 'commande:update'],
     forceEager: false
 )]
@@ -24,29 +25,31 @@ class Commande
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
+    #[Groups(['client:read','commande:read','statusCommande:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
+    #[Groups(['client:read','commande:read','statusCommande:read'])]
     private ?string $commandeReference = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
+    #[Groups(['client:read','commande:read','statusCommande:read'])]
     private ?\DateTimeInterface $dateCommande = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','client:read','commande:read','livreCommande:read','statusCommande:read'])]
+    #[Groups(['client:read','commande:read','statusCommande:read'])]
     private ?float $total = null;
 
     #[ORM\ManyToOne(inversedBy: 'commande')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['user:read','client:read','commande:read','statusCommande:read'])]
+    #[MaxDepth(1)]
+    #[Groups(['commande:read','statusCommande:read'])]
     private ?Client $client;
 
     #[ORM\ManyToOne(inversedBy: 'commandes')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['commande:read'])]
+    #[MaxDepth(1)]
     private ?StatusCommande $statusCommande = null;
 
 
